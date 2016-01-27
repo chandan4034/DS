@@ -1,0 +1,116 @@
+/*  https://www.hackerrank.com/challenges/dijkstrashortreach
+	Chandan kumar
+	Prerequisites:-Priority Queue,Vector,Pair,Some basic STl and programming Basic
+	Date:-27-Jan-2016	*/
+#include <iostream>
+#include<limits.h>
+#include<algorithm>
+#include<cstdio>
+#include<queue>
+#include<set>
+#include<map>
+#include<string>
+#include<vector>
+#include<cstring>
+#define ll long long
+#define mod 1000000007
+#define s1(x) scanf("%d",&x);
+#define s2(x,y) scanf("%d%d",&x,&y);
+#define debug() printf("\n----@@@@@-----\n");
+#define wl(t) while(t--)
+#define M 3001
+#define nl() printf("\n");
+#define fr(i,a,n) for(i=a;i<n;i++)
+using namespace std;
+
+ll power(ll a,ll b) {
+	if(b==0)	return 1;
+	ll tmp=power(a,b/2)%mod;
+	tmp=(tmp*tmp)%mod;
+	if(b&1)
+		tmp=(tmp*(a%mod))%mod;
+	return tmp;
+}
+int n;
+typedef pair<int,int> pr;
+const int INF = 1061109567; 
+void dijkstra(int start,int d[],vector<pr> G[]) {
+	//Priority_queur<type,container,comparator> PQueue;
+	int i;
+	fr(i,0,n+1) {
+		d[i]=INF;
+	}
+	priority_queue < pr,vector < pr >,greater<pr> >  Q;//Pr is defined as pair<int,int>
+	Q.push(pr(0,start));//Pushing starting dist 0 and start vertex
+	d[start]=0;
+	int uvertex,cdist,vvertex,weight;
+	while(!Q.empty()) {
+		uvertex=Q.top().second;
+		cdist=Q.top().first;
+		Q.pop();
+		if(d[uvertex]<cdist)
+			continue;
+		fr(i,0,G[uvertex].size()) {
+			vvertex=G[uvertex][i].first; //First element is v in u-->v 
+			weight=G[uvertex][i].second;//Because second element is weight
+			if(d[vvertex]>d[uvertex]+weight) {
+				d[vvertex]=d[uvertex]+weight;
+				Q.push(pr(d[vvertex],vvertex)); 
+			}
+		}
+	}
+}
+void print(int dis[],int n)
+{
+	cout<<"\n";
+	for(int i=1;i<=n;i++)
+	{
+		cout<<i<<" = "<<dis[i]<<'\n';
+	}
+	cout<<"\n";
+}
+void display(int dis[],int n,int start) {
+	int i;
+	fr(i,1,n+1) {
+		if(i!=start) {
+			if(dis[i]==INF)
+				cout<<"-1 ";
+			else
+				cout<<dis[i]<<" ";
+		}
+	}
+	nl();
+}
+int main()	{
+	int t,m,src,dest,w,i,start;
+	s1(t);
+	wl(t) {
+		int dist[M];
+		vector< pr > G[M];
+		s2(n,m);
+		fr(i,0,m) {
+			s1(src);
+			s2(dest,w);
+			G[src].push_back(pr(dest,w));
+			G[dest].push_back(pr(src,w));
+		}
+		s1(start);
+		dijkstra(start,dist,G);
+		display(dist,n,start);
+		fr(i,0,n+1) {
+			G[i].clear();
+		}
+	}
+	return 0;
+}
+
+/*
+1
+4 4
+1 2 24
+1 4 20
+3 1 3
+4 3 12
+1
+Output:-24,3,15
+*/
